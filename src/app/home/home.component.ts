@@ -17,16 +17,31 @@ export class HomeComponent implements OnInit, OnDestroy {
     //   console.log(count);
     // })
 
-    const customIntervalObservable = new Observable(observer => {
+    const customIntervalObservable = new Observable((observer) => {
       setInterval(() => {
         observer.next(this.count);
+        if (this.count === 2) {
+          observer.complete();
+        }
+        if (this.count > 3) {
+          observer.error(new Error('Count is greater than 3'));
+        }
         this.count++;
       }, 1000);
     });
 
-    this.firstObsSubscription = customIntervalObservable.subscribe(data => {
-      console.log(data);
-    });
+    this.firstObsSubscription = customIntervalObservable.subscribe(
+      (data) => {
+        console.log(data); 
+      },
+      (error) => {
+        console.log(error);
+        alert(error.message);
+      },
+      () => {
+        console.log('completed!');
+      }
+    );
   }
 
   ngOnDestroy(): void {
